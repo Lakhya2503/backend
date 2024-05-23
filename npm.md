@@ -1,7 +1,7 @@
 # npm 
 
 ### What is the npm
-- Type package
+- Type of package
 
 #
 ### How to install npm packages
