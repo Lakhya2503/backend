@@ -1,1 +1,1 @@
-- [video stop here](https://youtu.be/7fjOw8ApZ1I?si=_gywFnf7l96jviPH&t=15764)
+- [video stop here](https://youtu.be/7fjOw8ApZ1I?si=gCGNQaIjxxO2JpO1&t=17271)
