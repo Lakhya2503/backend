@@ -1,1 +1,17 @@
 - [video stop here](https://youtu.be/7fjOw8ApZ1I?si=gCGNQaIjxxO2JpO1&t=17271)
+
+- javascript Backend Roadmap | chai aur backend  00:00:00
+- How to deploy backend code in production   00:29:19
+- Connect Backend with frontend   01:19:32
+- Data Modelling for backend with mongoose  02:10:17
+- E-commerce and Hospital management data modelling  03:06:27
+- Taking backend to next level  03:56:16
+- How to setup a professional backend project  04:06:17
+- How to connect database in MERN with debugging  04:47:51
+- Custom API response and error handling 05:28:43
+- User and video model with hooks and JWT 06:15:38
+- How to upload file in backend | Multer 07:05:38
+- HTTP crash course 07:43:59
+- Complete guide for router and controller 08:08:17
+- Logic building - Register controller 08:37:51
+- How to use postman for backend 09:30:39

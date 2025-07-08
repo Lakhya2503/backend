@@ -9,8 +9,16 @@ dotenv.config({
 }); // Load environment variables from .env file
 
 
-connectDB() // Call the connectDB function to establish a connection to MongoDB
-
+connectDB()// Call the connectDB function to establish a connection to MongoDB
+    .then(() => {
+        app.listen(process.env.PORT || 8000, (() => {
+            console.log("Server runing at port:  "+ process.env.PORT );
+        }))
+    })
+    .catch((error) => {
+        console.log(`mongodb connection failed ${error.message}`);
+        
+    })
 
 
 /*
