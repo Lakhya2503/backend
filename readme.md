@@ -1,4 +1,4 @@
-- [video stop here](https://youtu.be/7fjOw8ApZ1I?si=gCGNQaIjxxO2JpO1&t=17271)
+- [video stop here](https://youtu.be/7fjOw8ApZ1I?si=Z5hfHzBrjwPyUjTb&t=25538)
 
 - javascript Backend Roadmap | chai aur backend  00:00:00
 - How to deploy backend code in production   00:29:19
@@ -10,7 +10,7 @@
 - How to connect database in MERN with debugging  04:47:51
 - Custom API response and error handling 05:28:43
 - User and video model with hooks and JWT 06:15:38
-- How to upload file in backend | Multer 07:05:38
+- How to upload file in backend | Multer 07:05:38 --
 - HTTP crash course 07:43:59
 - Complete guide for router and controller 08:08:17
 - Logic building - Register controller 08:37:51
