@@ -14,6 +14,14 @@ app.use(cors({
 app.use(express.json( { limit: "16kb" } )) // Parse incoming JSON requests
 app.use(urlencoded({ extended: true })) // Parse URL-encoded requests
 app.use(express.static("public")) // Serve static files from the "public" directory
-
 app.use(cookieParser()) // Parse cookies from incoming requests
+
+
+//routes
+import userRouter from './routes/user.routes.js'
+
+//routes declaration
+app.use("/api/v1/users", userRouter)
+
+
 export { app }

@@ -1,6 +1,6 @@
 const asycnHandler = (reqHandler) => {
-    (req, res, next) => {
-        Promise.resolve(reqHandler(req, res, next))
+    return (req, res, next) => {
+       Promise.resolve(reqHandler(req, res, next))
             .catch((Error) => next(Error))
     }
 }
