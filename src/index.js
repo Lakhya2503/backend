@@ -8,6 +8,7 @@ dotenv.config({
     path: "./.env" // Load environment variables from .env file
 }); // Load environment variables from .env file
 
+// console.log(process.env.CLOUDINARY_URL)
 
 connectDB()// Call the connectDB function to establish a connection to MongoDB
     .then(() => {

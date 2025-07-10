@@ -1,7 +1,11 @@
 import express, { urlencoded } from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import dotenv from "dotenv";
 
+dotenv.config({
+    path: "./.env" // Load environment variables from .env file
+}); // Load environment variables from .env file
 
 
 const app = express()
@@ -10,6 +14,7 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN, // Set the origin for CORS from environment variables
     credentials:true // Allow credentials to be included in CORS requests
 }))
+
 
 app.use(express.json( { limit: "16kb" } )) // Parse incoming JSON requests
 app.use(urlencoded({ extended: true })) // Parse URL-encoded requests

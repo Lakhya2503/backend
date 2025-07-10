@@ -16,16 +16,18 @@ const registerUser = asycnHandler(async (req, res) => {
     // check for user creation
     // return res
 
+    
+
     const { fullname, email, username, password } = req.body
-    console.log(`fullname: ${fullname}, email: ${email}, username: ${username}, password: ${password}`);
+    // console.log(`fullname: ${fullname}, email: ${email}, username: ${username}, password: ${password}`);
     
     if (
-        [fullname,email,username,password].some((fileds)=>fileds?.trime() === "") // check if any field is empty
+        [fullname,email,username,password].some((field)=>field?.trim() === "") // check if any field is empty
     ) {
             throw ApiError (400, "All fields are required")
     }
 
-    const existsUser = User.findOne({
+    const existsUser = await User.findOne({
         $or: [ { username }, { email } ]
     })
 
@@ -34,22 +36,28 @@ const registerUser = asycnHandler(async (req, res) => {
     }
     
     const avatarLocalPath = req.files?.avatar[0]?.path;
+    // console.log(avatarLocalPath);
+    
     const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
     // console.log(req.files);
+    // console.log(`42 ${process.env.CLOUDINARY_CLOUD_NAME}`);
     
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar is required")
     }
     
     const avatar = await uploadOnCloudinary(avatarLocalPath)
+    // console.log(uploadOnCloudinary);
+    
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
-    // console.log(avatar);
-    // console.log(coverImage);
+    console.log("52 avatar",avatar);
+    console.log("53 coverimage" ,coverImage.url);
     
     if (!avatar) {
-        throw new ApiError(400, "Avatar is required")
+        throw new ApiError(400, "Avatar is required 51")
     }
+    
 
    const user = await User.create({
         fullname,
