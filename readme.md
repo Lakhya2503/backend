@@ -1,5 +1,6 @@
-- [video stop here](https://youtu.be/7fjOw8ApZ1I?si=cwaXR16T2kElFWCK&t=27839)
-- part II -  17:20 
+# BACKEND SERIES
+## part I
+- [video link](https://youtu.be/7fjOw8ApZ1I?si=cwaXR16T2kElFWCK&t)
 
 - javascript Backend Roadmap | chai aur backend  00:00:00
 - How to deploy backend code in production   00:29:19
@@ -16,6 +17,17 @@
 - Complete guide for router and controller 08:08:17
 - Logic building - Register controller 08:37:51
 - How to use postman for backend 09:30:39
+
+## part II
+
+- [video link](https://youtu.be/8k-kK3tsJFY?si=r00BQ8DJvjAgffQ4)
+
+- Access token and refresh token  00:00:00
+- Writing update controller for user  01::32:52
+- Understand the subscription schema  02:16:06
+- Learn mongoDB aggregation pipelines 02:36:17
+- How to write sub pipelines and routes 03:13:01
+- Summary so far  03:43:15
 
 ## 
 
