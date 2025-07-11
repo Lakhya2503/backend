@@ -2,6 +2,13 @@ import mongoose from "mongoose";
 import  jwt  from "jsonwebtoken";
 import bcrypt from 'bcrypt'
 
+import dotenv from "dotenv";
+
+dotenv.config({
+    path: "./.env" // Load environment variables from .env file
+}); // Load environment variables from .env file
+
+
 // import { JsonWebTokenError } from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema({
@@ -66,6 +73,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password)
 }
 
+// console.log("process.env.ACCESS_TOKEN_SECRET", process.env.ACCESS_TOKEN_SECRET);
 
 
 userSchema.methods.generateAccessToken = function () {
