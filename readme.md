@@ -104,3 +104,202 @@
 - 404 : Not Found
 - 500 : Internal Server Error
 - 504 : Gatway time out
+
+##
+
+# Access Tokens & Refresh Tokens
+
+## Core Concepts
+
+- 🔐 **Access Token**: Short-lived key for API access (typically 1 hour)
+- 🔄 **Refresh Token**: Long-lived key to get new access tokens (days/months)
+- 🔗 **Flow**: User auth → both tokens issued → access token used until expiry → refresh token gets new access token
+
+
+```
+/**
+ * COMPLETE TOKEN AUTH WORKFLOW FOR MARKDOWN FILES
+ * 
+ * This file demonstrates:
+ * 1. Authentication server that issues tokens
+ * 2. Protected API server for markdown files
+ * 3. Client implementation with token refresh logic
+ * 
+ * Run with: node thisfile.js
+ */
+
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const axios = require('axios');
+
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
+const CONFIG = {
+  SECRET: 'your-secret-key-here',
+  ACCESS_TOKEN_LIFE: '15m',  // Short-lived (15 minutes)
+  REFRESH_TOKEN_LIFE: '7d',  // Long-lived (7 days)
+  PORT: {
+    AUTH: 3000,
+    API: 4000
+  }
+};
+
+// Mock database
+const users = [{ id: 1, username: 'md_user', password: 'md_pass' }];
+const markdownFiles = {
+  'example': '# Hello Markdown\n\nThis is protected content!',
+  'notes': '## Secure Notes\n\n- Never store tokens in MD files'
+};
+
+// ============================================================================
+// AUTHENTICATION SERVER (Issues tokens)
+// ============================================================================
+function startAuthServer() {
+  const app = express();
+  app.use(express.json());
+
+  // Login endpoint - issues both tokens
+  app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const user = users.find(u => u.username === username && u.password === password);
+    
+    if (!user) return res.sendStatus(401);
+
+    const accessToken = jwt.sign({ userId: user.id }, CONFIG.SECRET, { 
+      expiresIn: CONFIG.ACCESS_TOKEN_LIFE 
+    });
+    
+    const refreshToken = jwt.sign({ userId: user.id }, CONFIG.SECRET, { 
+      expiresIn: CONFIG.REFRESH_TOKEN_LIFE 
+    });
+    
+    res.json({ accessToken, refreshToken });
+  });
+
+  // Refresh endpoint - issues new access token
+  app.post('/refresh', (req, res) => {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.sendStatus(401);
+
+    try {
+      const decoded = jwt.verify(refreshToken, CONFIG.SECRET);
+      const newAccessToken = jwt.sign(
+        { userId: decoded.userId }, 
+        CONFIG.SECRET, 
+        { expiresIn: CONFIG.ACCESS_TOKEN_LIFE }
+      );
+      res.json({ accessToken: newAccessToken });
+    } catch (error) {
+      res.sendStatus(403); // Invalid/expired refresh token
+    }
+  });
+
+  app.listen(CONFIG.PORT.AUTH, () => 
+    console.log(`Auth server running on port ${CONFIG.PORT.AUTH}`));
+}
+
+// ============================================================================
+// API SERVER (Protected markdown files)
+// ============================================================================
+function startApiServer() {
+  const app = express();
+
+  // Authentication middleware
+  const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader?.split(' ')[1]; // Bearer <token>
+    
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, CONFIG.SECRET, (err, user) => {
+      if (err) return res.sendStatus(403); // Invalid/expired token
+      req.user = user;
+      next();
+    });
+  };
+
+  // Protected markdown file endpoint
+  app.get('/markdown/:filename', authenticateToken, (req, res) => {
+    const filename = req.params.filename;
+    
+    if (!markdownFiles[filename]) {
+      return res.status(404).send('Markdown file not found');
+    }
+    
+    res.type('text/markdown').send(markdownFiles[filename]);
+  });
+
+  app.listen(CONFIG.PORT.API, () => 
+    console.log(`API server running on port ${CONFIG.PORT.API}`));
+}
+
+// ============================================================================
+// CLIENT IMPLEMENTATION (Demonstrates workflow)
+// ============================================================================
+async function demonstrateClientFlow() {
+  let accessToken = '';
+  let refreshToken = '';
+
+  // Helper function to make authenticated requests
+  async function fetchMarkdown(filename) {
+    try {
+      const response = await axios.get(
+        `http://localhost:${CONFIG.PORT.API}/markdown/${filename}`, 
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      console.log(`✅ [${filename}.md] Success:\n${response.data}\n`);
+    } catch (error) {
+      if (error.response?.status === 403) {
+        console.log('🔄 Access token expired, refreshing...');
+        await refreshTokens();
+        await fetchMarkdown(filename); // Retry with new token
+      } else {
+        console.error(`❌ Error: ${error.message}`);
+      }
+    }
+  }
+
+  // Refresh token logic
+  async function refreshTokens() {
+    const response = await axios.post(`http://localhost:${CONFIG.PORT.AUTH}/refresh`, {
+      refreshToken
+    });
+    accessToken = response.data.accessToken;
+  }
+
+  // 1. First login to get tokens
+  console.log('🔐 Logging in to get tokens...');
+  const loginRes = await axios.post(`http://localhost:${CONFIG.PORT.AUTH}/login`, {
+    username: 'md_user',
+    password: 'md_pass'
+  });
+  
+  accessToken = loginRes.data.accessToken;
+  refreshToken = loginRes.data.refreshToken;
+  console.log('🔑 Received tokens:\n- Access Token:', accessToken.slice(0, 20) + '...\n');
+
+  // 2. Access protected markdown files
+  console.log('📄 Requesting markdown files...');
+  await fetchMarkdown('example');
+  await fetchMarkdown('notes');
+
+  // 3. Simulate token expiration (after ACCESS_TOKEN_LIFE)
+  console.log(`⏳ Waiting for token expiration (${CONFIG.ACCESS_TOKEN_LIFE})...`);
+  setTimeout(async () => {
+    console.log('\n🕒 Token should be expired now...');
+    await fetchMarkdown('example'); // Will trigger refresh flow
+  }, 16 * 60 * 1000); // 16 minutes (longer than 15m token life)
+}
+
+// ============================================================================
+// START ALL SERVERS AND DEMONSTRATE FLOW
+// ============================================================================
+startAuthServer();
+startApiServer();
+
+// Give servers a second to start
+setTimeout(demonstrateClientFlow, 1000);
+```
+
