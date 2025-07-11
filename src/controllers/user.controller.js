@@ -104,7 +104,6 @@ const registerUser = asycnHandler(async (req, res) => {
     )  
 })
 
-
 const loginUser = asycnHandler(async (req, res) => {
     // req body -> data
     // username or email
@@ -183,7 +182,6 @@ const logoutUser = asycnHandler(async (req, res) => {
         .clearCookie("refreshToken", options)
         .json(new ApiResponse(200, {}, "User logged out successfully"))
 })
-
 
 const refreshAccessToken = asycnHandler( async (req,res) => {
     const incomingRefreshToken = req.coockie.refreshToken || req.body.refreshToken
@@ -327,6 +325,8 @@ const updateCoverImage = asycnHandler(async(req, res)=> {
      return res.status(200).json(new ApiResponse(200,user,"CoverImage update Successfully"))
     
 })
+
+
 export {
     registerUser,
     loginUser,  
