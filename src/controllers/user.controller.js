@@ -163,8 +163,8 @@ const loginUser = asycnHandler(async (req, res) => {
 const logoutUser = asycnHandler(async (req, res) => {
     await User.findByIdAndUpdate(
         req.user._id, {
-        $set: {
-            refreshToken: undefined
+        $unset: {
+            refreshToken: 1
         }
     },
         {
@@ -185,19 +185,25 @@ const logoutUser = asycnHandler(async (req, res) => {
 })
 
 const refreshAccessToken = asycnHandler( async (req,res) => {
-    const incomingRefreshToken = req.coockie.refreshToken || req.body.refreshToken
+    const incomingRefreshToken = req.cookies.refreshToken  || req.body.refreshToken
     
     if (!incomingRefreshToken) {
-        throw new ApiError(401, "Unauthorized reuest")
+        throw new ApiError(401, "Unauthorized request")
     }
 
-   try {
+    
+    try {
+       
      const decodedToken = jwt.verify(
          incomingRefreshToken,
-         process.env.ACCESS_TOKEN_SECRET
-     )
+         process.env.REFRESH_TOKEN_SECREAT
+        )
+
+        
+     // find user with id from decoded token
  
-     const user = await User.findById(decodedToken?._id)
+       const user = await User.findById(decodedToken?._id)
+       
  
      if (!user) {
          throw new ApiError(401, "Invalid Refresh Token")
@@ -212,7 +218,10 @@ const refreshAccessToken = asycnHandler( async (req,res) => {
          secure : true
      }
  
-     const { accessToken, newRefreshToken } = await genrateAccessAndRefreshTokens(user._id)
+       const { accessToken, newRefreshToken } = await genrateAccessAndRefreshTokens(user._id)
+    //    console.log(accessToken);
+    //    console.log(newRefreshToken);
+       
  
      return res
          .status(200)
@@ -241,7 +250,7 @@ const changeCurrentPassword = asycnHandler(async (req, res) => {
     if (!user) {
         throw new ApiError(401, "user not found")
     }
-    const isPasswordCorrect = await user.isPasswordCorrect(password)
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
     if (!isPasswordCorrect) {
         throw new ApiError(400, "Invalid password")
     }
@@ -256,13 +265,19 @@ const changeCurrentPassword = asycnHandler(async (req, res) => {
 const getCurrentUser = asycnHandler(async (req, res) => {
     return res.
         status(200).
-        json(new ApiResponse(200, req.user, "Current user fetched successfully"))
+        json(new ApiResponse(
+            200,
+            req.user,
+            "Current user fetched successfully"))
 })
 
 const updateAccountDetails = asycnHandler(async (req, res) => {
-    const { fullname, email } = req.body
+    const { fullname, email, username } = req.body
+    console.log("fullname", fullname);
+    console.log("email", email);
+    
 
-    if (!(fullname || email)) {
+    if (!fullname || !email || !username) {
         throw new ApiError(400 , "All fields are required")
     }
 
@@ -271,11 +286,15 @@ const updateAccountDetails = asycnHandler(async (req, res) => {
         {
             $set: {
                 fullname,
-                email
+                email,
+                username: username.toLowerCase()
             }
         },
         { new : true }
     ).select("-password")
+
+    console.log("user", user.fullname);
+    
 
     return res
         .status(200)
@@ -375,12 +394,12 @@ const getUserChannelProfile = asycnHandler(async (req, res) => {
             $project: {
                 fullname: 1,
                 username : 1,
-                subscribersCount,
-                channelsSubscribedToCount,
-                isSubscribed,
+                subscribersCount : 1,
+                channelsSubscribedToCount : 1,
+                isSubscribed : 1,
                 avatar: 1,
                 coverImage: 1,
-                email: 1,
+                email: 1,   
             }
         }
     ])
