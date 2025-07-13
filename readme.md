@@ -107,7 +107,7 @@
 
 ##
 
-# Access Tokens & Refresh Tokens
+## Access Tokens & Refresh Tokens
 
 ## Core Concepts
 
@@ -303,3 +303,21 @@ startApiServer();
 setTimeout(demonstrateClientFlow, 1000);
 ```
 
+## Agregation Pipeline
+- Aggregation pipeline is a framework for data aggregation in MongoDB
+- It allows you to process data records and return computed results
+- It is similar to SQL GROUP BY but more powerful
+- It consists of multiple stages, each performing an operation on the data
+- Each stage transforms the data and passes it to the next stage
+- Stages are defined using the `$` operator
+- Common stages include `$match`, `$group`, `$sort`, `$project`, and `$lookup`
+- Aggregation pipelines can be used for complex queries, data transformations, and analytics
+- They can handle large datasets efficiently
+
+
+# Access Tokens & Refresh Tokens
+- Access tokens are short-lived credentials used to access protected resources.
+- Refresh tokens are long-lived credentials used to obtain new access tokens.
+- Access tokens are typically valid for a few minutes to an hour.
+- Refresh tokens can be valid for days or months.
+- The flow involves the user authenticating, receiving both tokens, using the access token until it expires, and then using the refresh token to obtain a new access token.
