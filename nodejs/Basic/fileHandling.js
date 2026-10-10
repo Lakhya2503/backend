@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from "fs";
 
 /* FS MODULE */
 
@@ -19,7 +19,7 @@ import fs from 'fs';
 
 // Syncronasly
 // const result = fs.readFileSync('./testCases.txt', 'utf-8')
-// console.log("result : ", result) 
+// console.log("result : ", result)
 
 /* ========== */
 
@@ -83,4 +83,10 @@ import fs from 'fs';
 //     if(result) console.log("RESULT :", result)
 // })
 
+/* ============================================================= */
+/*
+import os from 'os'
+
+console.log("OS size : ", os.cpus().length)
+*/
 /* ============================================================= */
